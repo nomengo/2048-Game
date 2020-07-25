@@ -16,16 +16,25 @@ public class Game : MonoBehaviour
     public Text scoreText;
 
     public int score = 0;
-   
+
+    public AudioClip moveTilesSound;
+
+    public AudioClip mergeTileSound;
+
+    private AudioSource audioSource;
+    
     void Start()
     {
         gameOverCanvas.gameObject.SetActive(false);
         GenerateNewTile(2);
+
+        audioSource = transform.GetComponent<AudioSource>();
     }
     
     
     void Update()
     {
+
         if (!CheckGameOver())
         {
             CheckInput();
@@ -38,31 +47,25 @@ public class Game : MonoBehaviour
 
     void CheckInput()
     {
-        bool down = Input.GetKeyDown(KeyCode.DownArrow), up = Input.GetKeyDown(KeyCode.UpArrow), right = Input.GetKeyDown(KeyCode.RightArrow), left = Input.GetKeyDown(KeyCode.LeftArrow);
-        
-        if(up || down || right || left)
+        bool left = Input.GetKeyDown(KeyCode.LeftArrow), right = Input.GetKeyDown(KeyCode.RightArrow), up = Input.GetKeyDown(KeyCode.UpArrow), down = Input.GetKeyDown(KeyCode.DownArrow);
+        if (right || left|| down || up)
         {
             PrepareTilesForMerging();
-
-            if (up)
-            {
-                //Debug.Log(GetRandomLocation());
-                MoveAllTiles(Vector2.up);
-            }
             if (right)
             {
-                //Debug.Log(GetRandomLocation());
                 MoveAllTiles(Vector2.right);
-            }
-            if (down)
-            {
-                //Debug.Log(GetRandomLocation());
-                MoveAllTiles(Vector2.down);
             }
             if (left)
             {
-                //Debug.Log(GetRandomLocation());
                 MoveAllTiles(Vector2.left);
+            }
+            if (up)
+            {
+                MoveAllTiles(Vector2.up);
+            }
+            if (down)
+            {
+                MoveAllTiles(Vector2.down);
             }
         }
     }
@@ -194,6 +197,7 @@ public class Game : MonoBehaviour
 
         if (movedTileNumber != 0)
         {
+            audioSource.PlayOneShot(moveTilesSound);
             GenerateNewTile(1);
         }
     }
@@ -297,6 +301,8 @@ public class Game : MonoBehaviour
             UpdateGrid();
 
             score += movingTileValue * 2;
+
+            audioSource.PlayOneShot(mergeTileSound);
 
             UpdateScore();
 
